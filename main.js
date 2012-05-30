@@ -28,10 +28,11 @@
 
 define(function (require, exports, module) {
     'use strict';
-    
+
     // Configuration
     var shortcut            = "Ctrl-Shift-R";
-    var commandId           = "extensions.ReloadInBrowser";
+    var commandId           = "kehrig.ReloadInBrowser.reload";
+    var commandName         = "Reload in browser"
     var colors              = ["#cccccc", "#e6861c"];
 
     // Load dependent modules
@@ -66,28 +67,7 @@ define(function (require, exports, module) {
         .insertBefore("#main-toolbar .buttons a:first");
 
     // Register the command. This allows us to create a key binding to it
-    CommandManager.register(commandId, reloadInBrowser);
+    CommandManager.register(commandName, commandId, reloadInBrowser);
 
-    // There doesn't seem to be an easy way to add another shortcut
-    // Below we do it the hard way. Potenially this causes cross-platform issues
-    // since the flat key binding does not contain all parameters originally
-    // passed to KeyMap.create
-    
-    // Take a flat copy of the current keymap
-    var flatKeymap = KeyBindingManager.getKeymap();
-
-    // Insert our command
-    flatKeymap[shortcut] = commandId;
-    
-    // Reconstruct the format KeyMap.create needs
-    var bindings = [];
-    $.each(flatKeymap, function (shortcut, command) {
-        var binding = {};
-        binding[shortcut] = command;
-        bindings.push(binding);
-    });
-    
-    // Create and install our modified keymap
-    var keymap = KeyMap.create({ bindings: bindings, platform: brackets.platform });
-    KeyBindingManager.installKeymap(keymap);
+    KeyBindingManager.addBinding(commandId, shortcut);
 });
