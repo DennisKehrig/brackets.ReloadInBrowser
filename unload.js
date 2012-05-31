@@ -32,43 +32,13 @@ define(function (require, exports, module) {
     // Configuration
     var shortcut            = "Ctrl-Shift-R";
     var commandId           = "kehrig.ReloadInBrowser.reload";
-    var commandName         = "Reload in browser"
-    var colors              = ["#cccccc", "#e6861c"];
 
     // Load dependent modules
     var CommandManager      = brackets.getModule("command/CommandManager");
-    var Inspector           = brackets.getModule("LiveDevelopment/Inspector/Inspector");
-    var KeyMap              = brackets.getModule("command/KeyMap");
     var KeyBindingManager   = brackets.getModule("command/KeyBindingManager");
-
-    /**
-     * Reloads the page in the browser via the LiveDevelopment inspector
-     */
-    function reloadInBrowser() {
-        Inspector.Page.enable();
-        Inspector.Page.reload();
-    }
     
-    // Insert the reload button in the toolbar to the left of the first a element (life preview button)
-    var $reloadButton = $("<a>")
-        .text("↺")
-        .attr("title", "Reload page in browser")
-        .addClass("reloadInBrowser")
-        .click(reloadInBrowser)
-        .css({
-            "margin-right":     "10px",
-            "font-weight":      "bold",
-            "color":            colors[0]
-        })
-        .hover(function () {
-            $(this).css({ "color": colors[1], "text-decoration": "none" });
-        }, function () {
-            $(this).css({ "color": colors[0] });
-        })
-        .insertBefore("#main-toolbar .buttons a:first");
-
-    // Register the command. This allows us to create a key binding to it
-    CommandManager.register(commandName, commandId, reloadInBrowser);
-
-    KeyBindingManager.addBinding(commandId, shortcut);
+    $("#main-toolbar .buttons a.reloadInBrowser").remove();
+    // Not possible
+    //CommandManager.unregister(commandId);
+    KeyBindingManager.removeBinding(shortcut);
 });
