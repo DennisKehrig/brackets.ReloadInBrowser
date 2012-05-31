@@ -68,7 +68,9 @@ define(function (require, exports, module) {
         .insertBefore("#main-toolbar .buttons a:first");
 
     // Register the command. This allows us to create a key binding to it
-    CommandManager.register(commandName, commandId, reloadInBrowser);
+    if (! CommandManager.get(commandId)) {
+        CommandManager.register(commandName, commandId, reloadInBrowser);
+    }
 
     KeyBindingManager.addBinding(commandId, shortcut);
 });
