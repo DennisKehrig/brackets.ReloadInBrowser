@@ -38,7 +38,6 @@ define(function (require, exports, module) {
     // Load dependent modules
     var CommandManager      = brackets.getModule("command/CommandManager");
     var Inspector           = brackets.getModule("LiveDevelopment/Inspector/Inspector");
-    var KeyMap              = brackets.getModule("command/KeyMap");
     var KeyBindingManager   = brackets.getModule("command/KeyBindingManager");
 
     /**
