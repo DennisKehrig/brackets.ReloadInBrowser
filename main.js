@@ -32,7 +32,7 @@ define(function (require, exports, module) {
     // Configuration
     var shortcut            = "Ctrl-Shift-R";
     var commandId           = "kehrig.ReloadInBrowser.reload";
-    var commandName         = "Reload in browser"
+    var commandName         = "Reload in browser";
     var colors              = ["#cccccc", "#e6861c"];
 
     // Load dependent modules
