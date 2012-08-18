@@ -36,83 +36,17 @@ define(function (require, exports, module) {
     var colors              = ["#cccccc", "#e6861c"];
 
     // Load dependent modules
-    var Async               = brackets.getModule("utils/Async");
-    var DocumentManager     = brackets.getModule("document/DocumentManager");
+    var Commands            = brackets.getModule("command/Commands");
     var CommandManager      = brackets.getModule("command/CommandManager");
     var Inspector           = brackets.getModule("LiveDevelopment/Inspector/Inspector");
     var KeyBindingManager   = brackets.getModule("command/KeyBindingManager");
-
-    /** Note: if there is an error, the promise is not rejected until the user has dimissed the dialog */
-    function doSave(docToSave) {
-        var result = new $.Deferred();
-        
-        function handleError(error, fileEntry) {
-            result.reject(error);
-        }
-            
-        if (docToSave && docToSave.isDirty) {
-            var fileEntry = docToSave.file;
-            var writeError = false;
-            
-            fileEntry.createWriter(
-                function (writer) {
-                    writer.onwriteend = function () {
-                        // Per spec, onwriteend is called after onerror too
-                        if (!writeError) {
-                            docToSave.notifySaved();
-                            result.resolve();
-                        }
-                    };
-                    writer.onerror = function (error) {
-                        writeError = true;
-                        handleError(error, fileEntry);
-                    };
-
-                    // We don't want normalized line endings, so it's important to pass true to getText()
-                    writer.write(docToSave.getText(true));
-                },
-                function (error) {
-                    handleError(error, fileEntry);
-                }
-            );
-        } else {
-            result.resolve();
-        }
-        return result.promise();
-    }
-
-    /**
-     * Copied from document/DocumentCommandHandler.js
-     * Saves all unsaved documents. Returns a Promise that will be resolved once ALL the save
-     * operations have been completed. If ANY save operation fails, an error dialog is immediately
-     * shown and the other files wait to save until it is dismissed; after all files have been
-     * processed, the Promise is rejected if any ONE save operation failed.
-     *
-     * @return {$.Promise}
-     */
-    function saveAll() {
-        // Do in serial because doSave shows error UI for each file, and we don't want to stack
-        // multiple dialogs on top of each other
-        return Async.doSequentially(
-            DocumentManager.getWorkingSet(),
-            function (file) {
-                var doc = DocumentManager.getOpenDocumentForPath(file.fullPath);
-                if (doc) {
-                    return doSave(doc);
-                } else {
-                    // working set entry that was never actually opened - ignore
-                    return (new $.Deferred()).resolve().promise();
-                }
-            },
-            false
-        );
-    }
 
     /**
      * Reloads the page in the browser via the LiveDevelopment inspector
      */
     function reloadInBrowser() {
-        saveAll().then(function () {
+        var saveAllCommand = CommandManager.get(Commands.FILE_SAVE_ALL);
+        saveAllCommand.execute().done(function () {
             Inspector.Page.enable();
             Inspector.Page.reload();
         });
