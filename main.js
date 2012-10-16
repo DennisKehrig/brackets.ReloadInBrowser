@@ -41,6 +41,9 @@ define(function (require, exports, module) {
     var Inspector           = brackets.getModule("LiveDevelopment/Inspector/Inspector");
     var KeyBindingManager   = brackets.getModule("command/KeyBindingManager");
 
+    // State
+    var $reloadButton;
+
     /**
      * Reloads the page in the browser via the LiveDevelopment inspector
      */
@@ -52,28 +55,50 @@ define(function (require, exports, module) {
         });
     }
 
-    // Insert the reload button in the toolbar to the left of the first a element (life preview button)
-    var $reloadButton = $("<a>")
-        .text("↺")
-        .attr("title", "Reload page in browser")
-        .addClass("reloadInBrowser")
-        .click(reloadInBrowser)
-        .css({
-            "margin-right":     "10px",
-            "font-weight":      "bold",
-            "color":            colors[0]
-        })
-        .hover(function () {
-            $(this).css({ "color": colors[1], "text-decoration": "none" });
-        }, function () {
-            $(this).css({ "color": colors[0] });
-        })
-        .insertBefore("#main-toolbar .buttons a:first");
-
-    // Register the command. This allows us to create a key binding to it
-    if (!CommandManager.get(commandId)) {
-        CommandManager.register(commandName, commandId, reloadInBrowser);
+    function addReloadButton() {
+        // Insert the reload button in the toolbar to the left of the first a element (life preview button)
+        $reloadButton = $("<a>")
+            .text("↺")
+            .attr("title", "Reload page in browser")
+            .addClass("reloadInBrowser")
+            .click(reloadInBrowser)
+            .css({
+                "margin-right":     "10px",
+                "font-weight":      "bold",
+                "color":            colors[0]
+            })
+            .hover(function () {
+                $(this).css({ "color": colors[1], "text-decoration": "none" });
+            }, function () {
+                $(this).css({ "color": colors[0] });
+            })
+            .insertBefore("#main-toolbar .buttons a:first");
     }
 
-    KeyBindingManager.addBinding(commandId, shortcut);
+    function removeReloadButton() {
+        $reloadButton.remove();
+    }
+
+    function load() {
+        // Register the command. This allows us to create a key binding to it
+        if (!CommandManager.get(commandId)) {
+            CommandManager.register(commandName, commandId, reloadInBrowser);
+        }
+        KeyBindingManager.addBinding(commandId, shortcut);
+
+        addReloadButton();
+    }
+    
+    function unload() {
+        KeyBindingManager.removeBinding(shortcut);
+        // Not possible
+        //CommandManager.unregister(commandId);
+
+        removeReloadButton();
+    }
+
+    exports.load = load;
+    exports.unload = unload;
+
+    load();
 });
