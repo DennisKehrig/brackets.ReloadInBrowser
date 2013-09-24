@@ -1,0 +1,12 @@
+{
+    "name": "dkehrig.reload-in-browser",
+    "title": "Reload in Browser",
+    "description": "Reload the page in the browser (press Cmd/Ctrl-Shift-R)",
+    "homepage": "https://github.com/DennisKehrig/brackets.ReloadInBrowser/",
+    "version": "1.0.0",
+    "author": "Dennis Kehrig <mailgithub@denniskehrig.de> (https://github.com/DennisKehrig)",
+    "license": "MIT",
+    "engines": {
+        "brackets": ">=0.31.0"
+    }
+}
